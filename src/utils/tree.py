@@ -1,5 +1,5 @@
-from utils.node import Node
-import utils.directories as dirs
+from src.utils.node import Node
+import src.utils.directories as dirs
 import gzip
 import ijson
 import os

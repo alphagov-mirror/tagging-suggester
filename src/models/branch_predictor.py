@@ -1,7 +1,7 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
-import utils.directories as dirs
-import utils.nlp as nlp
+import src.utils.directories as dirs
+import src.utils.nlp as nlp
 import os
 
 class BranchPredictor:

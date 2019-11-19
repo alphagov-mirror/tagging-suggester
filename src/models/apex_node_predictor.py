@@ -2,9 +2,9 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 import numpy as np
 import os
-import utils.directories as dirs
-import utils.nlp as nlp
-from data.representative_content import *
+import src.utils.directories as dirs
+import src.utils.nlp as nlp
+from src.data.representative_content import *
 
 class ApexNodePredictor:
     def train(self, tree):
