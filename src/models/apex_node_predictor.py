@@ -70,6 +70,7 @@ class ApexNodePredictor:
         :return: List, names of apex taxons the content should be tagged to, unsorted.
         """
         model = dirs.open_pickle_file(self.model_file_path())
+        print(self.vectorizer_file_path())
         vectorizer = dirs.open_pickle_file(self.vectorizer_file_path())
         class_probabilities = model.predict_proba(vectorizer.transform([text_to_predict]))[0]
         indicies_of_classes_above_threshold = np.argwhere(class_probabilities > self.threshold())

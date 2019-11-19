@@ -19,7 +19,7 @@ class TaggingSuggester:
         print("Loading data")
         content = Content()
         print("Processing data")
-        RepresentativeContent(content, tree).generate()
+        RepresentativeContent(content, self.tree).generate()
         print("Training models")
         ApexNodePredictor().train(self.tree)
         BranchPredictor().train(content, self.tree)
