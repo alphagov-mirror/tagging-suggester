@@ -1,5 +1,5 @@
-from utils.content import *
-from utils.tree import *
+from src.utils.content import *
+from src.utils.tree import *
 from data.representative_content import *
 from models.apex_node_predictor import *
 from models.branch_predictor import *
