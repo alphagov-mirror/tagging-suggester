@@ -82,4 +82,4 @@ class BranchPredictor:
                         if child_taxon_recursive_child.unique_title() == predicted_node_unique_title:
                             node = child_taxon_recursive_child
                             break
-        return [taxon.unique_title() for taxon in node.recursive_parents()]
+        return [taxon.content_id for taxon in node.recursive_parents()]

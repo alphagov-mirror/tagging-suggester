@@ -12,4 +12,5 @@ def tagging_suggestion():
     result = tagging_suggester.predict(json['text'])
     return jsonify({ "suggestions": result })
 
-app.run(host='0.0.0.0')
+if __name__=="__main__":
+    app.run(debug=True)
