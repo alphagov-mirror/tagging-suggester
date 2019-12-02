@@ -1,8 +1,12 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
+import numpy as np
+from pyxdameraulevenshtein import normalized_damerau_levenshtein_distance
 import src.utils.directories as dirs
 import src.utils.nlp as nlp
 import os
+
+import pry
 
 class BranchPredictor:
     def train(self, content, tree):
@@ -68,6 +72,9 @@ class BranchPredictor:
     def predict(self, tree, apex_node, text_to_predict):
         node = apex_node
         has_at_least_one_child_taxon_which_can_have_predictions = True
+        translated_tokenized_text_to_predict = {}
+        for word in text_to_predict.split(" "):
+            translated_tokenized_text_to_predict["".join(nlp.tokenize(word))] = word
         while any(node.children) and has_at_least_one_child_taxon_which_can_have_predictions:
             has_at_least_one_child_taxon_which_can_have_predictions = False
             for child_taxon in node.children:
@@ -75,6 +82,31 @@ class BranchPredictor:
                     has_at_least_one_child_taxon_which_can_have_predictions = True
                     model = dirs.open_pickle_file(self.model_path(child_taxon))
                     vectorizer = dirs.open_pickle_file(self.vectorizer_path(child_taxon))
-                    predicted_node_content_id = model.predict(vectorizer.transform([text_to_predict]))[0]
+                    transformed_text = vectorizer.transform([text_to_predict])
+                    words_to_explain_choice = self.prediction_explanation(vectorizer, transformed_text, translated_tokenized_text_to_predict)
+                    predicted_node_content_id = model.predict(transformed_text)[0]
                     node = tree.find(predicted_node_content_id)
-        return [taxon.content_id for taxon in node.recursive_parents()]
+        result = {}
+        result['taxon'] = node
+        result['explanation'] = words_to_explain_choice
+        return result
+
+    def prediction_explanation(self, vectorizer, transformed_text, translated_tokenized_text_to_predict):
+        indices_of_top_words = np.argsort(transformed_text.toarray()[0])[::-1][0:5]
+        feature_names = vectorizer.get_feature_names()
+        prediction_words = []
+        for index in indices_of_top_words:
+            if transformed_text[0,index] > 0:
+                tokenized_feature_name = feature_names[index]
+                words_and_scores = {}
+                for tokenized_word, word in translated_tokenized_text_to_predict.items():
+                    if tokenized_feature_name in tokenized_word:
+                        score = normalized_damerau_levenshtein_distance(tokenized_word, tokenized_feature_name)
+                        words_and_scores[word] = score
+                if any(words_and_scores):
+                    best_word = sorted(words_and_scores.items(), key=lambda kv: kv[1])[0][0]
+                    prediction_words.append(best_word)
+        # Return a unique but still ordered list of words
+        seen = set()
+        seen_add = seen.add
+        return [x for x in prediction_words if not (x in seen or seen_add(x))]
