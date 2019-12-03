@@ -85,7 +85,7 @@ class BranchPredictor:
                     predicted_node_content_id = model.predict(transformed_text)[0]
                     node = tree.find(predicted_node_content_id)
         result = {}
-        result['taxon'] = node
+        result['taxon'] = node.content_id
         result['explanation'] = words_to_explain_choice
         return result
 
