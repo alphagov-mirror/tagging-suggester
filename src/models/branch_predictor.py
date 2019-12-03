@@ -6,8 +6,6 @@ import src.utils.directories as dirs
 import src.utils.nlp as nlp
 import os
 
-import pry
-
 class BranchPredictor:
     def train(self, content, tree):
         """
